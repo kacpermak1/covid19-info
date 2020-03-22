@@ -1,4 +1,10 @@
 body {
+  width:100%;
+  height:100%;
+  /* background-image: url('./virus1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat; */
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -7,7 +13,42 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html{
+  width:100%;
+  height:100%;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.cards-list div.card-div{
+  transition: 0.5s linear all;
+}
+
+.cards-list div.card-div:hover{
+  transform:scale(1.1);
+}
+
+
+.App {
+  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
+  background: url('./virus1.jpg') no-repeat center fixed;
+  background-size: cover;
+  overflow-y: scroll;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+/* @media screen and (min-width: 1025px) {
+  .App {
+    background: url('./virus1.jpg') no-repeat center fixed;
+    background-size: cover;
+    overflow-y: hidden;
+  }
+} */
