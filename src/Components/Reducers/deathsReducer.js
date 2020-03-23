@@ -6,7 +6,7 @@ const initState = {
     italy:0,
     global:0,
     states:0,
-    italy:0
+    selected:0
  
  }
  
@@ -44,6 +44,13 @@ const initState = {
         return {
             ...state,
             italy: action.payload,
+        }
+    }
+
+    if (action.type === 'DEATHS_SELECTED') {
+        return {
+            ...state,
+            selected: action.payload,
         }
     }
     return state

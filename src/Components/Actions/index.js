@@ -33,6 +33,13 @@ export const loadItalyDeaths = (data) => {
     }
 }
 
+export const loadSelectedDeaths = (data) => {
+    return {
+        type: "DEATHS_SELECTED",
+        payload: data
+    }
+}
+
 export const loadConfirmed = (data) => {
     return {
         type: "CONFIRMED",
@@ -66,3 +73,25 @@ export const loadItalyConfirmed = (data) => {
         payload: data
     }
 }
+
+export const loadSelectedConfirmed = (data) => {
+    return {
+        type: "CONFIRMED_SELECTED",
+        payload: data
+    }
+}
+
+export const loadCountries = (data) => {
+    return {
+        type: "LOAD_COUNTRIES",
+        payload: data
+    }
+}
+
+export const selectedCountryName = (data) => {
+    return {
+        type: 'SELECTED_COUNTRY_NAME',
+        payload: data
+    }
+}
+

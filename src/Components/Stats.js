@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
+import Select from "./Select";
 import Poland from "./Poland";
 import GB from "./GB";
 import States from "./States";
@@ -15,7 +16,8 @@ import {
   loadStatesDeaths,
   loadStatesConfirmed,
   loadItalyDeaths,
-  loadItalyConfirmed
+  loadItalyConfirmed,
+  loadCountries
 } from "./Actions";
 const axios = require("axios");
 
@@ -30,15 +32,25 @@ class Stats extends Component {
     statesDeaths: 0,
     statesCases: 0,
     italyDeaths: 0,
-    italyCases: 0
+    italyCases: 0,
+    allCountries: {},
+    updateComponent:false
   };
 
   componentDidMount() {
+    this.onMount();
+      setInterval(() => {
+        this.onMount();
+      },120000);
+  }
+
+  onMount = () => {
     this.fetchData("", "globalDeaths", "globalCases");
     this.fetchData("countries/PL", "deaths", "cases");
     this.fetchData("countries/GB", "britain", "britainCases");
     this.fetchData("countries/US", "statesDeaths", "statesCases");
     this.fetchData("countries/IT", "italyDeaths", "italyCases");
+    this.fetchCountries();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -62,7 +74,19 @@ class Stats extends Component {
       this.props.loadItalyDeaths(this.state.italyDeaths);
       this.props.loadItalyConfirmed(this.state.italyCases);
     }
+    if (prevState.allCountries !== this.state.allCountries) {
+      this.props.loadCountries(this.state.allCountries.countries);
+    }
+    if (prevProps.selectedName !== this.props.selectedName) {
+        this.setState({updateComponent:!this.state.updateComponent});
+      }
   }
+
+  fetchCountries = () => {
+    axios(`https://covid19.mathdro.id/api/countries`)
+      .then(res => this.setState({ allCountries: res.data }))
+      .catch(err => console.log(err, "something went wrong"));
+  };
 
   fetchData = (countryCode, stateDeathsName, stateCasesName) => {
     axios
@@ -79,55 +103,44 @@ class Stats extends Component {
   render() {
     return (
       <>
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "20px 20px"
-          }}
-        >
-          <Typography color="textPrimary" variant="h2">
+        <div className="header-top">
+          <Typography align="center" color="textPrimary" variant="h2">
             COVID-19 INFO
           </Typography>
         </div>
-        <div
-          className="cards-list"
-          style={{
-            width: "100%",
-            height: "50%",
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom:"100px"
-          }}
-        >
+        <div className="cards-list">
           <Italy />
           <Poland />
           <GB />
           <States />
         </div>
-        <div
-          style={{
-            width: "100%",
-            height:"20%",
-            display: "flex",
-            flexDirection: "column",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "20px 20px"
-          }}
-        >
-          <Typography color="textPrimary" variant="h4">
+        <div className="select">
+          <Select />{this.props.selectedName !== '' ?
+          <div className="selected-info">
+            <Typography color="textPrimary" component="h2">
+              Confirmed cases:{" "}
+              <span style={{ fontWeight: "600" }}>
+                {this.props.selectedCases}
+              </span>
+            </Typography>
+            <Typography color="textPrimary" component="h2">
+              Deaths:{" "}
+              <span style={{ fontWeight: "600" }}>
+                {this.props.selectedDeaths}
+              </span>
+            </Typography>
+          </div> : ''}
+        </div>
+        <div className="bottom-global">
+          <Typography
+            align="center"
+            spacing="5"
+            color="textPrimary"
+            variant="h4"
+          >
             Coronavirus Cases: {this.state.globalCases}
           </Typography>
-          <Typography color="textPrimary" variant="h4">
+          <Typography align="center" color="textPrimary" variant="h4">
             Deaths: {this.state.globalDeaths}
           </Typography>
         </div>
@@ -138,7 +151,10 @@ class Stats extends Component {
 
 const mapStateToProps = state => {
   return {
-    data: state.deathsReducer.deaths
+    data: state.deathsReducer.deaths,
+    selectedDeaths: state.deathsReducer.selected,
+    selectedCases: state.confirmedReducer.selected,
+    selectedName: state.countriesReducer.selectedCountry
   };
 };
 
@@ -173,6 +189,9 @@ const mapDispatchToProps = dispatch => {
     },
     loadItalyConfirmed: data => {
       dispatch(loadItalyConfirmed(data));
+    },
+    loadCountries: data => {
+      dispatch(loadCountries(data));
     }
   };
 };
